@@ -1,0 +1,101 @@
+﻿@model SoteCare.Models.VitalFunctions
+
+@{
+    ViewBag.Title = "Add Vital Function";
+}
+
+<h2>Elintoiminnot, @ViewBag.PatientName</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Lisää potilaan elintoimintotietoja</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(model => model.PatientID)
+        <div class="form-group">
+            <label class="control-label col-md-2">Potilas</label>
+            <div class="col-md-10">
+                <p class="form-control-static">@ViewBag.PatientName</p>
+            </div>
+        </div>
+
+        <!-- Date/Time Field -->
+        <div class="form-group">
+            <label>Pvm/Aika</label>
+            <input type="datetime-local" name="DateTime" class="form-control" id="DateTime" value="@Model.DateTime?.ToString(" yyyy-MM-ddTHH:mm")" required />
+        </div>
+
+        <div class="form-group">
+            <label>Syke</label>
+            <input type="number" name="HeartRate" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Systolinen VP</label>
+            <input type="number" name="SystolicBloodPressure" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Diastolinen VP</label>
+            <input type="number" name="DiastolicBloodPressure" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Hengitystiheys</label>
+            <input type="number" name="RespiratoryRate" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Ruumiinlämpö</label>
+            <input type="text" name="Temperature" class="form-control" placeholder="esim., 36.5 tai 36,5" required />
+            @Html.ValidationMessage("Temperature", "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            <label>Happisaturaatio</label>
+            <input type="number" step="0.1" name="OxygenSaturation" class="form-control" />
+        </div>
+
+        <!-- Uusi kenttä: Verisokeri -->
+        <div class="form-group">
+            <label>Verisokeri (mmol/l)</label>
+            <input type="text" name="BloodSugar" class="form-control" placeholder="esim. 5.4" required />
+            @Html.ValidationMessage("BloodSugar", "", new { @class = "text-danger" })
+        </div>
+        <br />
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="submit" class="btn btn-primary">Tallenna</button>
+                <a href="@Url.Action("VitalFunctions", "Patients", new { id = Model.PatientID })" class="btn btn-secondary">Peruuta</a>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dateTimeInput = document.getElementById('DateTime');
+        if (dateTimeInput && !dateTimeInput.value) {
+            const currentDate = new Date().toISOString().slice(0, 16);
+            dateTimeInput.value = currentDate;
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const temperatureInput = document.querySelector('input[name="Temperature"]');
+        if (temperatureInput) {
+            temperatureInput.addEventListener('input', function () {
+                this.value = this.value.replace(',', '.');
+                this.value = this.value.replace(/[^0-9.]/g, '');
+            });
+        }
+    });
+</script>
+
+
+@*create action*@

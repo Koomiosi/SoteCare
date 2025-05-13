@@ -1,0 +1,27 @@
+﻿@model IEnumerable<SoteCare.Models.Patients>
+
+@{
+    ViewBag.Title = "Patients";
+}
+
+<h2 class="text-center">SoteCare Potilaat</h2>
+
+<div class="container">
+    <!-- Add New Patient Button -->
+    <div class="text-xl-center">
+        @Html.ActionLink("Lisää uusi potilas", "Create", "Patients", null, new { @class = "btn btn-success" })
+    </div>
+    <hr />
+
+    <ul class="list-group">
+        @foreach (var item in Model)
+        {
+            <li class="list-group-item">
+                <a href="@Url.Action("Details", "Patients", new { id = item.PatientID })">
+                    @item.FirstName @item.LastName
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+

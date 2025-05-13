@@ -1,0 +1,92 @@
+﻿@model SoteCare.Models.Treatment
+
+@{
+    ViewBag.Title = "Details";
+}
+
+
+
+
+<h2>Hoito info</h2>
+
+<div>
+    <p><strong>Potilas: </strong>@Model.Patients.FirstName @Model.Patients.LastName</p>
+    <p><strong>Hoito: </strong>@Model.TreatmentType</p>
+    <p><strong>Aloitus päivämäärä: </strong>@Model.StartDate.ToShortDateString()</p>
+    <p><strong>Lopetus päivämäärä: </strong>@(Model.EndDate.HasValue ? Model.EndDate.Value.ToShortDateString() : "Jatkuva")</p>
+    <p><strong>Muistiinpanot: </strong>@Model.Notes</p>
+</div>
+
+<div>
+    <a href="@Url.Action("Treatments", "Patients", new { id = Model.PatientID })" class="btn btn-secondary">Takaisin</a>
+</div>
+
+
+
+
+
+
+
+
+
+
+@*<h2>Details</h2>
+
+    <div>
+        <h4>Treatment</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.StartDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.StartDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.EndDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.EndDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.TreatmentType)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.TreatmentType)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Notes)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Notes)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Medications.MedicationName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Medications.MedicationName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Patients.FirstName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Patients.FirstName)
+            </dd>
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.TreatmentID }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>*@

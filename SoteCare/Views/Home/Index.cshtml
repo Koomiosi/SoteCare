@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<main>
+    <section class="row" aria-labelledby="aspnetTitle">
+        <h1 id="title">SoteCare</h1>
+        <hr />
+        <p class="lead">Tervetuloa käyttämään SoteCare ohjelmistoa! Tehty osana careerian toisen lukukauden Scrum ja ohjelmistotuotannon menetelmät kurssia.</p>
+        <hr />
+        <p><a href="https://careeria.fi" class="btn btn-lg btn-info">Careerian sivuille &raquo;</a></p>
+    </section>
+
+    <!-- Add a row with the login button in the right corner -->
+    <div class="row">
+        <div class="col-md-12 text-right">
+            @if (Session["UserID"] == null)
+            {
+                <a href="@Url.Action("Login", "Account")" class="btn btn-lg btn-info">Kirjaudu sisään tästä &raquo;</a> <!-- Login Button -->
+            }
+        </div>
+    </div>
+    <br />
+    <img src="https://cdn.pixabay.com/photo/2017/09/30/18/53/prognosis-icon-2803190_1280.png" class="center" style="vertical-align:middle;margin:0px 50px"/>
+</main>

@@ -1,0 +1,120 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+}
+
+<!-- Top Section -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <!-- Display logged-in user's full name -->
+        <h1>Tervetuloa, <a href="@Url.Action("UserProfile", "Account")">@Session["FullName"]</a>.</h1>
+        <p>Ohjausnäkymäsi</p>
+    </div>
+    <div class="col-md-4 text-right">
+        <!-- User Info -->
+        <div class="text-center card bg-light p-3">
+            <h5>Käyttäjä</h5>
+            <p>
+                <a href="@Url.Action("UserProfile", "Account")">@Session["FullName"]</a> <!-- Display full name as clickable link -->
+            </p>
+            <form action="@Url.Action("Logout", "Account")" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger">Kirjaudu ulos</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Patient Statistics -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card text-center bg-light p-3">
+            <h4>Potilaita yhteensä</h4>
+            <p class="h2">@ViewBag.TotalPatients</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card text-center bg-light p-3">
+            <h4>Uudet potilaat</h4>
+            <p class="h2">@ViewBag.NewPatients</p>
+        </div>
+    </div>
+</div>
+
+<!-- Main Section -->
+<div class="row">
+    <!-- Left Column (Recent Patients and Cards) -->
+    <div class="col-md-8">
+        <!-- Recent Patients Table -->
+        <h2 class="section-title">Viimeksi lisätyt potilaat</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Potilaan Nimi</th>
+                    <th>Syntymäaika</th>
+                    <th>Sukupuoli</th>
+                    <th>Huone</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var patient in ViewBag.RecentPatients)
+                {
+                    <tr>
+                        <td>@patient.PatientID</td>
+                        <td>@patient.FirstName @patient.LastName</td>
+                        <td>@patient.DateOfBirth.ToShortDateString()</td>
+                        <td>@patient.Gender</td>
+                        <td>@(patient.PatientRooms != null ? patient.PatientRooms.RoomNumber : "Ei määritelty")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Medication Info and Treatment Cards -->
+        <div class="row">
+            <div class="text-center col-md-6">
+                <div class="card bg-info text-white p-3 mb-3">
+                    <h4>Lääkkeet</h4>
+                    <p>Lääkitysten määrä: @ViewBag.TotalMedications</p>
+                    <p>Aktiiviset lääkitykset: @ViewBag.ActiveMedications</p>
+                </div>
+            </div>
+            <div class="text-center col-md-6">
+                <div class="card bg-success text-white p-3 mb-3">
+                    <h4>Hoidot</h4>
+                    <p>Aktiiviset hoidot: @ViewBag.ActiveTreatments</p>
+                    <p>Valmistuneet hoidot: @ViewBag.CompletedTreatments</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column (Doctor List) -->
+    <div class="text-center col-md-4">     
+        <!-- Doctor List Section -->
+        <h2 class="section-title">Lääkärit</h2>
+        <div class="card text-center bg-light  p-3">
+            <ul class="list-unstyled">
+                @foreach (var doctor in ViewBag.Doctors)
+                {
+                    <li class="mb-2">
+                        <strong>@doctor.FirstName @doctor.LastName</strong>
+                        <br />
+                        Erikoisuus: @doctor.Specialization
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+}
+
+
+@*user boxiin pitäs lisätä pfp iconi, ja jtn action juttuja*@
+@*pitää centralize kaikki content on vasemmalla puolella*@
+
+

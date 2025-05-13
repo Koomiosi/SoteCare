@@ -1,0 +1,42 @@
+﻿@model IEnumerable<SoteCare.Models.Treatment>
+
+<h2>Hoito potilaalle, @ViewBag.PatientName</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Lääkkeen nimi</th>
+            <th>Aloituspäivämäärä</th>
+            <th>Loppupäivämäärä</th>
+            <th>Hoitotyyppi</th>
+            <th>Muistiinpanot</th>
+            <th>Muutokset</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var treatment in Model)
+        {
+            <tr>
+                <td>@(treatment.Medications?.MedicationName ?? "N/A")</td>
+                <td>@treatment.StartDate.ToString("d")</td>
+                <td>@(treatment.EndDate?.ToString("d") ?? "Jatkuva")</td>
+                <td>@treatment.TreatmentType</td>
+                <td>@treatment.Notes</td>
+                <td>
+                    @Html.ActionLink("Info", "Details", "Treatments", new { id = treatment.TreatmentID }, new { @class = "btn btn-info btn-sm" }) |
+                    @Html.ActionLink("Muokkaa", "Edit", "Treatments", new { id = treatment.TreatmentID }, new { @class = "btn btn-warning btn-sm" }) |
+                    @Html.ActionLink("Poista", "Delete", "Treatments", new { id = treatment.TreatmentID }, new { @class = "btn btn-danger btn-sm" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="d-flex gap-2 mt-3">
+    <a href="@Url.Action("Create", "Treatments", new { patientId = ViewBag.PatientID })" class="btn btn-success">
+        Lisää uusi
+    </a>
+    <a href="@Url.Action("Details", "Patients", new { id = ViewBag.PatientID })" class="btn btn-secondary">
+        Takaisin
+    </a>
+</div>

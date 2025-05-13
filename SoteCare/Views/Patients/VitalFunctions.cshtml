@@ -1,0 +1,259 @@
+﻿@model SoteCare.ViewModels.VFunctionChart
+
+@{
+    ViewBag.Title = "Vital Functions";
+}
+
+<div class="container">
+    <h2>Potilaan Elintoiminnot, @Model.PatientName</h2>
+
+    @if (ViewBag.NoRecords)
+    {
+        <div class="alert alert-warning">
+            Ei tallennettuja elintoimintoja potilaalle.
+        </div>
+        <a href="@Url.Action("Create", "VitalFunctions", new { id = ViewBag.PatientID })" class="btn btn-primary">
+            Lisää Elintoimintoja
+        </a>
+    }
+    else
+    {
+        <button class="btn btn-success mb-3" id="showAddForm">Lisää elintoimintoja</button>
+        <div id="addVitalFunctionForm" style="display: none;">
+            @using (Html.BeginForm("Create", "VitalFunctions", FormMethod.Post, new { id = "addVitalForm" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.PatientID)
+
+                <!-- DateTime Field -->
+                <div class="form-group">
+                    <label for="DateTime">Päivämäärä ja Aika</label>
+                    @Html.TextBoxFor(model => model.DateTime, new
+                    {
+                        @class = "form-control",
+                        type = "datetime-local"
+                    })
+                </div>
+
+                <div class="form-group">
+                    <label>Syke</label>
+                    <input type="number" name="HeartRate" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Systolinen VP</label>
+                    <input type="number" name="SystolicBloodPressure" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Diastolinen VP</label>
+                    <input type="number" name="DiastolicBloodPressure" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Hengitystiheys</label>
+                    <input type="number" name="RespiratoryRate" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>Ruumiinlämpö</label>
+                    <input type="text" name="Temperature" class="form-control" placeholder="e, 36.5" required />
+                    @Html.ValidationMessage("Temperature", "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label>Happisaturaatio</label>
+                    <input type="number" step="0.1" name="OxygenSaturation" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Verisokeri (mmol/l)</label>
+                    <input type="text" name="BloodSugar" class="form-control" placeholder="esim. 5.4" required />
+                    @Html.ValidationMessage("BloodSugar", "", new { @class = "text-danger" })
+                </div>
+                <br />
+                <button type="submit" class="btn btn-primary">Lisää</button>
+            }
+        </div>
+
+        <canvas id="vitalChart" width="800" height="400"></canvas>
+
+        <br />
+        <div class="btn-lg">
+            @Html.ActionLink("Takaisin", "Details", "Patients", new { id = ViewBag.PatientID }, new { @class = "btn btn-secondary" })
+        </div>
+        <br />
+
+        <!-- Table for Vital Function Records -->
+        <div class="mt-4">
+            <h3>Lista potilaan Elintoiminnoista</h3>
+
+            @if (Model.Dates.Count > 0)
+            {
+                <table class="table table-bordered table-striped" style="max-height:10px">
+                    <thead>
+                        <tr>
+                            <th>Pvm/Aika</th>
+                            <th>Syke (bpm)</th>
+                            <th>Systolinen VP (mmHg)</th>
+                            <th>Diastolinen VP (mmHg)</th>
+                            <th>Hengitystiheys (Hengitys/min)</th>
+                            <th>Ruumiinlämpö (°C)</th>
+                            <th>Happisaturaatio (%)</th>
+                            <th>Verisokeri (mmol/l)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.Dates.Count; i++)
+                        {
+                            <tr>
+                                <td>@Model.Dates[i].ToString()</td>
+                                <td>@Model.HeartRates[i]</td>
+                                <td>@Model.SystolicBP[i]</td>
+                                <td>@Model.DiastolicBP[i]</td>
+                                <td>@Model.RespiratoryRates[i]</td>
+                                <td>@(Model.Temperatures[i].ToString("0.#"))</td>
+                                <td>@Model.OxygenSaturations[i]</td>
+                                <td>@Model.BloodSugars[i]</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-warning" role="alert">
+                    Ei tallennettuja elintoimintoja.
+                </div>
+            }
+        </div>
+    }
+</div>
+
+
+<script>
+    window.vitalData = @Html.Raw(Json.Encode(new {
+        Dates = Model.Dates,
+        HeartRates = Model.HeartRates,
+        SystolicBP = Model.SystolicBP,
+        DiastolicBP = Model.DiastolicBP,
+        Temperatures = Model.Temperatures,
+        BloodSugars = Model.BloodSugars
+    }));
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Automatically sets current date and time for the DateTime input
+        const dateTimeInput = document.querySelector("input[type='datetime-local']");
+        if (dateTimeInput) {
+            const currentDate = new Date().toISOString().slice(0, 16);
+            dateTimeInput.value = currentDate;
+        }
+
+        const addButton = document.getElementById("showAddForm");
+        const addForm = document.getElementById("addVitalFunctionForm");
+
+        if (addButton && addForm) {
+            addButton.addEventListener("click", function () {
+                if (addForm.style.display === "none" || addForm.style.display === "") {
+                    addForm.style.display = "block";
+                } else {
+                    addForm.style.display = "none";
+                }
+            });
+        }
+
+        // Input normalization for Temperature
+        document.querySelector("form").addEventListener("submit", function (e) {
+            const temperatureInput = document.querySelector("[name='Temperature']");
+            const temperatureValue = temperatureInput.value.trim();
+            const validTemperature = /^(\d+([.,]\d{1,2})?)$/;
+            if (!validTemperature.test(temperatureValue)) {
+                e.preventDefault();
+                alert("Please enter a valid temperature (e.g., 36.5 or 36,5).");
+            }
+        });
+
+        const temperatureInput = document.querySelector('input[name="Temperature"]');
+        if (temperatureInput) {
+            temperatureInput.addEventListener('input', function () {
+                this.value = this.value.replace(',', '.');
+                this.value = this.value.replace(/[^0-9.]/g, '');
+            });
+        }
+
+        // Format temperature values for the chart
+        const formatTemperature = (temp) => (temp !== null ? parseFloat(temp).toFixed(1) : null);
+        const formattedTemperatures = window.vitalData.Temperatures.map(formatTemperature);
+
+        const ctx = document.getElementById('vitalChart').getContext('2d');
+        window.myVitalChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: window.vitalData.Dates,
+                datasets: [
+                    {
+                        label: 'Syke',
+                        data: window.vitalData.HeartRates,
+                        borderColor: 'blue',
+                        borderWidth: 2,
+                        fill: false
+                    },
+                    {
+                        label: 'Systolinen VP',
+                        data: window.vitalData.SystolicBP,
+                        borderColor: 'red',
+                        borderWidth: 2,
+                        fill: false
+                    },
+                    {
+                        label: 'Diastolinen VP',
+                        data: window.vitalData.DiastolicBP,
+                        borderColor: 'green',
+                        borderWidth: 2,
+                        fill: false
+                    },
+                    {
+                        label: 'Ruumiinlämpö',
+                        data: formattedTemperatures,
+                        borderColor: 'purple',
+                        borderWidth: 2,
+                        fill: false
+                    },
+                    {
+                        label: 'Verisokeri',
+                        data: window.vitalData.BloodSugars,
+                        borderColor: 'orange',
+                        borderWidth: 2,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Elintoimintojen mittaukset'
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Päivämäärä/Aika'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Arvot'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="~/Scripts/vitalfunction.js"></script>
+

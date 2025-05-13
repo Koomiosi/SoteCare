@@ -1,0 +1,24 @@
+﻿@model SoteCare.Models.Diagnoses
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Poista diagnoosi</h2>
+
+<h3>Oletko varma että haluat poistaa tämän diagnoosin?</h3>
+
+<div>
+    <p><strong>Potilas:</strong> @Model.Patients.FirstName @Model.Patients.LastName</p>
+    <p><strong>Diagnoosin nimi:</strong> @Model.DiagnosisName</p>
+    <p><strong>Diagnoosin päivämäärä:</strong> @Model.DiagnosisDate</p>
+    <p><strong>Muistiinpanot:</strong> @Model.Notes</p>
+</div>
+
+@using (Html.BeginForm("Delete", "Diagnoses", new { id = Model.DiagnosisID }, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <button type="submit" class="btn btn-danger">Poista</button>
+    <a href="@Url.Action("Diagnoses", "Patients", new { id = Model.PatientID })" class="btn btn-secondary">Takaisin</a>
+}
+

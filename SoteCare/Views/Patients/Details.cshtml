@@ -1,0 +1,92 @@
+﻿@model SoteCare.Models.Patients
+
+<div class="container">
+    <h2>@Model.FirstName @Model.LastName</h2>
+
+    <ul class="nav nav-tabs">
+        <li class="@(ViewBag.ActiveTab == "Details" ? "active" : "")">
+            <a class="nav-link active" href="@Url.Action("Details", "Patients", new { id = Model.PatientID })">Perustiedot</a>
+        </li>
+        <li class="@(ViewBag.ActiveTab == "PatientHistory" ? "active" : "")">
+            <a class="nav-link" href="@Url.Action("PatientHistory", "Patients", new { id = Model.PatientID })">Historia</a>
+        </li>
+        <li class="@(ViewBag.ActiveTab == "Diagnoses" ? "active" : "")">
+            <a class="nav-link" href="@Url.Action("Diagnoses", "Patients", new { id = Model.PatientID })">Diagnoosit</a>
+        </li>
+        <li class="@(ViewBag.ActiveTab == "Treatments" ? "active" : "")">
+            <a class="nav-link" href="@Url.Action("Treatments", "Patients", new { id = Model.PatientID })">Hoito</a>
+        </li>
+        <li class="@(ViewBag.ActiveTab == "PatientMedications" ? "active" : "")">
+            <a class="nav-link" href="@Url.Action("PatientMedications", "Patients", new { id = Model.PatientID })">Lääkitys</a>
+        </li>
+        <li class="@(ViewBag.ActiveTab == "VitalFunctions" ? "active" : "")">
+            <a class="nav-link" href="@Url.Action("VitalFunctions", "Patients", new { id = Model.PatientID })">Elintoiminnot</a>
+        </li>
+        <li class="@(ViewBag.ActiveTab == "Contact" ? "active" : "")">
+            <a class="nav-link" href="@Url.Action("Contact", "Patients", new { id = Model.PatientID })">Yhteystiedot</a>
+        </li>
+    </ul>
+
+    <!-- Perustietojen taulukko -->
+    <div class="tab-content">
+        <div class="tab-pane active">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th>Syntymäaika</th>
+                    <td>@Model.DateOfBirth.ToString("d")</td>
+                </tr>
+                <tr>
+                    <th>Sukupuoli</th>
+                    <td>@Model.Gender</td>
+                </tr>
+                <tr>
+                    <th>Osoite</th>
+                    <td>@Model.Address</td>
+                </tr>
+                <tr>
+                    <th>Huone</th>
+                    <td>@(Model.PatientRooms != null ? Model.PatientRooms.RoomNumber : "Ei määritelty")</td>
+                </tr>
+                <tr>
+                    <th>Allergiat</th>
+                    <td>@(string.IsNullOrEmpty(Model.Allergies) ? "Ei allergioita" : Model.Allergies)</td>
+                </tr>
+                <tr>
+                    <th>Riskitiedot</th>
+                    <td>@(string.IsNullOrEmpty(Model.RiskInfo) ? "Ei riskitietoja" : Model.RiskInfo)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Navigointi-painikkeet -->
+    <div class="mt-3">
+        @Html.ActionLink("Takaisin", "Index", "Patients", null, new { @class = "btn btn-secondary" })
+        <a href="@Url.Action("Edit", "Patients", new { id = Model.PatientID })" class="btn btn-warning">Muokkaa</a>
+        <a href="@Url.Action("Delete", "Patients", new { id = Model.PatientID })" class="btn btn-danger">Poista</a>
+    </div>
+
+    <!-- Lomake allergioiden ja riskitietojen päivittämiseen -->
+    <h4 class="mt-4">Lisää/Muokkaa allergiat ja riskitiedot</h4>
+    @using (Html.BeginForm("UpdateAllergiesRisk", "Patients", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <!-- Piilotettu kenttä potilaan ID:lle -->
+        <input type="hidden" name="patientId" value="@Model.PatientID" />
+
+        <div class="form-group">
+            <label>Allergiat</label>
+            <textarea name="allergies" class="form-control" rows="3">@Model.Allergies</textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Riskitiedot</label>
+            <textarea name="riskInfo" class="form-control" rows="3">@Model.RiskInfo</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Tallenna</button>
+    }
+</div>
+
+
+

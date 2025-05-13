@@ -1,0 +1,81 @@
+﻿@model SoteCare.Models.Patients
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<div class="container">
+    <h2>Muokkaa tietoja</h2>
+
+    @using (Html.BeginForm("Edit", "Patients", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.PatientID)
+
+        <div class="form-group">
+            <label for="FirstName">Etunimi</label>
+            @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            <label for="LastName">Sukunimi</label>
+            @Html.TextBoxFor(model => model.LastName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            <label for="DateOfBirth">Syntymäaika</label>
+            @Html.TextBoxFor(model => model.DateOfBirth, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+            @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            <label for="Gender">Sukupuoli</label>
+            @Html.DropDownListFor(model => model.Gender, new SelectList(new[] { "Mies", "Nainen", "Muu" }), new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.RoomID, "Huone", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.RoomID, (SelectList)ViewBag.RoomID, "Valitse huone", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.RoomID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Address">Osoite</label>
+            @Html.TextBoxFor(model => model.Address, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            <label for="PhoneNumber">Puhelinnumero</label>
+            @Html.TextBoxFor(model => model.PhoneNumber, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            <label for="Email">Sähköposti</label>
+            @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            <label for="EmergencyContactName">Hätäyhteyshenkilö</label>
+            @Html.TextBoxFor(model => model.EmergencyContactName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.EmergencyContactName, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            <label for="EmergencyContactPhone">Hätäyhteyshenkilö puhelinnumero</label>
+            @Html.TextBoxFor(model => model.EmergencyContactPhone, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.EmergencyContactPhone, "", new { @class = "text-danger" })
+        </div>
+
+        <br />
+        <button type="submit" class="btn btn-success">Tallenna</button>
+        <a href="@Url.Action("Index", "Patients")" class="btn btn-secondary">Takaisin</a>
+    }
+</div>

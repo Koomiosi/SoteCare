@@ -1,0 +1,78 @@
+﻿@model SoteCare.Models.PatientMedications
+
+@{
+    ViewBag.Title = "Lisää lääkitys";
+}
+
+<h2>Lisää lääke potilaalle, @ViewBag.PatientName</h2>
+
+@using (Html.BeginForm("Create", "PatientMedications", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.PatientID)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.MedicationID, "MedicationName")
+        @Html.DropDownListFor(model => model.MedicationID, (SelectList)ViewBag.MedicationID, "Valitse lääke", new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.MedicationID, "", new { @class = "text-danger" })
+    </div>
+
+    @*<div class="form-group">
+        @Html.LabelFor(model => model.DosageID, "Annostelu")
+        @Html.DropDownListFor(model => model.DosageID, (SelectList)ViewBag.DosageID, "Valitse annostelu", new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.DosageID, "", new { @class = "text-danger" })
+    </div>*@
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.DoctorID, "Lääkäri")
+        @Html.DropDownListFor(model => model.DoctorID, (SelectList)ViewBag.Doctors, "Valitse lääkäri", new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.DoctorID, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.StartDate, "Aloitus päivämäärä")
+        @Html.TextBoxFor(model => model.StartDate, new { @type = "date", @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.EndDate, "Lopetus päivämäärä")
+        @Html.TextBoxFor(model => model.EndDate, new { @type = "date", @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+    </div>
+
+    <!-- Kerta-annos -->
+    <div class="form-group">
+        @Html.LabelFor(model => model.SingleDose, "Kerta-annos (mg/ml)")
+        @Html.TextBoxFor(model => model.SingleDose, new { @class = "form-control", placeholder = "Esim. 500mg tai 10ml" })
+        @Html.ValidationMessageFor(model => model.SingleDose, "", new { @class = "text-danger" })
+    </div>
+
+    <!-- Kuinka monta kertaa päivässä lääke annetaan -->
+    <div class="form-group">
+        @Html.LabelFor(model => model.DailyFrequency, "Kuinka monta kertaa päivässä annetaan?")
+        @Html.TextBoxFor(model => model.DailyFrequency, new { @class = "form-control", type = "number", min = "1", placeholder = "Esim. 3 kertaa päivässä" })
+        @Html.ValidationMessageFor(model => model.DailyFrequency, "", new { @class = "text-danger" })
+    </div>
+
+    <!-- Lääkkeen antamisajat -->
+    <div class="form-group">
+        @Html.LabelFor(model => model.AdministrationTimes, "Lääkkeen antamisajat (esim. 08:00, 14:00, 20:00)")
+        @Html.TextBoxFor(model => model.AdministrationTimes, new { @class = "form-control", placeholder = "Syötä kellonajat pilkulla erotettuna" })
+        @Html.ValidationMessageFor(model => model.AdministrationTimes, "", new { @class = "text-danger" })
+    </div>
+
+    <!-- Lääkkeen tyyppi -->
+    <div class="form-group">
+        @Html.LabelFor(model => model.MedicationType, "Lääkkeen tyyppi")
+        @Html.DropDownListFor(model => model.MedicationType,
+            new SelectList(new List<string> { "Säännöllinen", "Tarvittaessa" }, Model.MedicationType),
+            new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.MedicationType, "", new { @class = "text-danger" })
+    </div>
+
+    <button type="submit" class="btn btn-success">Lisää lääke</button>
+    <a href="@Url.Action("Details", "Patients", new { id = ViewBag.PatientID })" class="btn btn-secondary">
+        Takaisin
+    </a>
+}

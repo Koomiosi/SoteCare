@@ -1,0 +1,52 @@
+﻿@model SoteCare.Models.Dosages
+
+<h3>Lisää annostus lääkkelle, @ViewBag.MedicationName</h3>
+
+@using (Html.BeginForm("AddDosage", "Medications", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(m => m.MedicationID)
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.DosageAmount)
+        @Html.TextBoxFor(m => m.DosageAmount, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.Frequency)
+        @Html.TextBoxFor(m => m.Frequency, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.RouteOfAdministration)
+        @Html.TextBoxFor(m => m.RouteOfAdministration, new { @class = "form-control" })
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Tallenna</button>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
+}
+
+<script>
+    // Handles form submission for AddDosage
+    $("form").submit(function (e) {
+        e.preventDefault();  // Prevent the default form submission
+        var form = $(this);
+        $.ajax({
+            url: form.attr('action'),  // Form action (AddDosage method)
+            type: form.attr('method'),  // Form method (POST)
+            data: form.serialize(),  // Serialize form data
+            success: function (response) {
+                if (response.success) {
+                    $('#modal').modal('hide');  // Hide the modal on success
+                    location.reload();  // Reload the page to reflect the changes
+                } else {
+                    alert(response.message);  // Show error message
+                }
+            },
+            error: function () {
+                alert("Tapahtui virhe lisättyä annosta.");  // Show error message on failure
+            }
+        });
+    });
+</script>

@@ -1,0 +1,35 @@
+﻿@model SoteCare.Models.PatientMedications
+
+@{
+    ViewBag.Title = "Delete Medication";
+}
+
+<h2>Poista lääkitys</h2>
+
+<h3>Olet poistamassa lääkityksen.</h3>
+
+<div>
+    <dl class="dl-horizontal">
+        <dt>Lääke:</dt>
+        <dd>@(Model.Medications != null ? Model.Medications.MedicationName : "N/A")</dd>
+
+        <dt>Lääkkeen aloituspäivämäärä:</dt>
+        <dd>@(Model.StartDate.HasValue ? Model.StartDate.Value.ToString("yyyy-MM-dd") : "N/A")</dd>  <!-- Updated to handle null dates -->
+
+        <dt>Lääkkeen lopetuspäivämäärä:</dt>
+        <dd>@(Model.EndDate.HasValue ? Model.EndDate.Value.ToString("yyyy-MM-dd") : "N/A")</dd>  <!-- Updated to handle null dates -->
+
+        <dt>Potilaan nimi:</dt>
+        <dd>@($"{Model.Patients?.FirstName} {Model.Patients?.LastName}" ?? "Unknown")</dd>
+    </dl>
+
+    @using (Html.BeginForm("Delete", "PatientMedications", new { id = Model.PatientMedicationID }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-danger">Poista</button>
+        <a href="@Url.Action("PatientMedications", "Patients", new { id = Model.PatientID })" class="btn btn-secondary">Takaisin</a>
+    }
+
+</div>
+
+

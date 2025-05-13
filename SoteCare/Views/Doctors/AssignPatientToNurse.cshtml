@@ -1,0 +1,84 @@
+﻿@model SoteCare.ViewModels.AssignPatientToNurseViewModel
+
+@{
+    ViewBag.Title = "Assign Patient to Nurse";
+}
+
+<h2>Määritä potilas hoitajalle</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div class="card">
+    <div class="card-body">
+        @using (Html.BeginForm("AssignPatientToNurse", "Doctors", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label for="patientId">Valitse potilas</label>
+                <select id="patientId" name="patientId" class="form-control">
+                    @if (ViewBag.UnassignedPatients != null && ViewBag.UnassignedPatients.Count > 0)
+                    {
+                        foreach (var patient in ViewBag.UnassignedPatients as List<SelectListItem>)
+                        {
+                            <option value="@patient.Value">@patient.Text</option>
+                        }
+                    }
+                    else
+                    {
+                        <option disabled>Ei näytettäviä potilaita.</option>
+                    }
+                </select>
+            </div>
+            <br />
+            <div class="form-group">
+                <label for="nurseId">Valitse hoitaja</label>
+                <select id="nurseId" name="nurseId" class="form-control">
+                    @if (ViewBag.Nurses != null && ViewBag.Nurses.Count > 0)
+                    {
+                        foreach (var nurse in ViewBag.Nurses as List<SelectListItem>)
+                        {
+                            <option value="@nurse.Value">@nurse.Text</option>
+                        }
+                    }
+                    else
+                    {
+                        <option disabled>Ei näytettäviä hoitajia.</option>
+                    }
+                </select>
+            </div>
+            <br />
+            <div class="form-group">
+                <label for="doctorId">Valitse lääkäri</label>
+                <select id="doctorId" name="doctorId" class="form-control">
+                    @if (ViewBag.Doctors != null && ViewBag.Doctors.Count > 0)
+                    {
+                        foreach (var doctor in ViewBag.Doctors as List<SelectListItem>)
+                        {
+                            <option value="@doctor.Value">@doctor.Text</option>
+                        }
+                    }
+                    else
+                    {
+                        <option disabled>Ei näytettäviä lääkäreitä.</option>
+                    }
+                </select>
+            </div>
+
+            <div class="card mt-3">
+                <button type="submit" class="btn btn-success">Määritä potilas</button>
+            </div>
+        }
+    </div>
+</div>
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval") 

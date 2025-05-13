@@ -1,0 +1,44 @@
+﻿@model IEnumerable<SoteCare.Models.Users>
+
+<h2>Users</h2>
+
+@* Check if there are any users *@
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Username</td>
+                    @*<td>@user.FullName</td>
+                    <td>@user.Email</td>*@
+                    <td>@user.Role</td>
+                    <td>
+                        @* Action links to view, edit or delete *@
+                        <a href="@Url.Action("Details", "Users", new { id = user.UserID })" class="btn btn-info">View</a>
+                        <a href="@Url.Action("Edit", "Users", new { id = user.UserID })" class="btn btn-primary">Edit</a>
+                        <a href="@Url.Action("Delete", "Users", new { id = user.UserID })" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No users found.</p>
+}
+
+<a href="@Url.Action("Create", "Users")" class="btn btn-success">Create New User</a>
+
+
